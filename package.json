@@ -1,0 +1,52 @@
+{
+  "name": "medical-device-lifecycle-manager",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Full-stack medical-device inspection, maintenance, and reporting workflow portfolio project.",
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "type": "module",
+  "scripts": {
+    "dev": "tsx server.ts",
+    "build": "vite build",
+    "build:server": "esbuild server.ts --bundle --platform=node --format=cjs --packages=external --outfile=.server-dist/server.cjs",
+    "build:node": "npm run build && npm run build:server",
+    "preview": "vite preview",
+    "clean": "rm -rf dist .server-dist",
+    "lint": "tsc --noEmit",
+    "start": "node .server-dist/server.cjs"
+  },
+  "dependencies": {
+    "@tailwindcss/vite": "^4.1.14",
+    "@vitejs/plugin-react": "^5.0.4",
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
+    "dotenv": "^17.2.3",
+    "express": "^4.22.2",
+    "express-rate-limit": "^8.5.2",
+    "firebase": "^12.16.0",
+    "jspdf": "^4.2.1",
+    "jspdf-autotable": "^5.0.8",
+    "lucide-react": "^0.546.0",
+    "motion": "^12.23.24",
+    "pg": "^8.22.0",
+    "react": "^19.0.1",
+    "react-dom": "^19.0.1",
+    "vite": "^6.2.3",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^4.17.25",
+    "@types/node": "^22.14.0",
+    "@types/pg": "^8.20.0",
+    "esbuild": "^0.25.12",
+    "postcss": "^8.5.18",
+    "tailwindcss": "^4.1.14",
+    "tsx": "^4.23.0",
+    "typescript": "~5.8.2",
+    "vite": "^6.2.3"
+  }
+}
