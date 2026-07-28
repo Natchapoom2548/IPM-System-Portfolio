@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect, Suspense, lazy } from "react";
+import { useState, useEffect, Suspense, lazy } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import Sidebar from "./components/Sidebar";
 import Header from "./components/Header";
@@ -45,7 +45,6 @@ export default function App() {
   // load devices
   const [devices, setDevices] = useState<MedicalDevice[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
-  const skipNextSave = React.useRef(true);
 
   useEffect(() => {
     if (!currentUser) {
@@ -56,7 +55,6 @@ export default function App() {
     apiFetch('/api/devices')
       .then(res => res.json())
       .then(data => {
-        skipNextSave.current = true;
         if (data && data.length > 0) {
             setDevices(data.map(convertDeviceToBE));
         } else {
@@ -66,7 +64,6 @@ export default function App() {
       })
       .catch(e => {
         console.error("Error fetching devices", e);
-        skipNextSave.current = true;
         setDevices(INITIAL_DEVICES.map(convertDeviceToBE));
         setIsLoaded(true);
       });
