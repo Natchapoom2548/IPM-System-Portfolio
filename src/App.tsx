@@ -21,7 +21,7 @@ const LoginScreen = lazy(() => import("./components/LoginScreen"));
 const UserManagement = lazy(() => import("./components/UserManagement"));
 const UserProfileModal = lazy(() => import("./components/UserProfileModal"));
 const LoginHistory = lazy(() => import("./components/LoginHistory"));
-import { MedicalDevice } from "./types";
+import type { MedicalDevice } from "./types";
 import { INITIAL_DEVICES } from "./data/mockData";
 import { convertDeviceToBE, getTodayStrBE, getTodayDateTimeStrBE } from "./utils/dateUtils";
 import { apiFetch } from "./utils/api";
@@ -144,7 +144,7 @@ export default function App() {
       prev.map((d) => {
         if (d.id === id) {
           const todayStr = getTodayDateTimeStrBE();
-          const updated = {
+          const updated: MedicalDevice = {
             ...d,
             status: "IPM",
             workflowStep: 2,
@@ -172,7 +172,7 @@ export default function App() {
       prev.map((d) => {
         if (d.id === id) {
           const todayStr = getTodayDateTimeStrBE();
-          const updated = {
+          const updated: MedicalDevice = {
             ...d,
             status: "Reporting",
             workflowStep: 4,
@@ -205,7 +205,7 @@ export default function App() {
       prev.map((d) => {
         if (d.id === id) {
           const todayStr = getTodayDateTimeStrBE();
-          const updated = {
+          const updated: MedicalDevice = {
             ...d,
             status: "Repair",
             workflowStep: 3,
@@ -238,7 +238,7 @@ export default function App() {
       prev.map((d) => {
         if (d.id === id) {
           const todayStr = getTodayDateTimeStrBE();
-          const updated = {
+          const updated: MedicalDevice = {
             ...d,
             status: "Reporting",
             workflowStep: 4,
@@ -271,7 +271,7 @@ export default function App() {
       prev.map((d) => {
         if (d.id === id) {
           const todayStr = getTodayDateTimeStrBE();
-          const updated = {
+          const updated: MedicalDevice = {
             ...d,
             status: "IPM", // Send back to IPM inspection for safety verification
             workflowStep: 2,
@@ -304,7 +304,7 @@ export default function App() {
       prev.map((d) => {
         if (d.id === id) {
           const todayStr = getTodayDateTimeStrBE();
-          const updated = {
+          const updated: MedicalDevice = {
             ...d,
             status: "Completed",
             certificateNo: certNo,

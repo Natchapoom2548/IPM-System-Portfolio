@@ -1493,8 +1493,8 @@ export default function IPMWorkflow({
   const getSubmissionDetails = () => {
     return {
       ipmTypes: ipmTypesState,
-      temperature: tempState,
-      humidity: humidityState,
+      temperature: tempState === "" ? (activeDevice?.temperature ?? 0) : tempState,
+      humidity: humidityState === "" ? (activeDevice?.humidity ?? 0) : humidityState,
       testApparatus: apparatusState,
       qualitativeTasks: qualitativeState,
       quantitativeTasks: quantitativeState,
