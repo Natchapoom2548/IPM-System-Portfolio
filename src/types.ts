@@ -18,9 +18,9 @@ export interface MedicalDevice {
   deviceType: string;
   equipmentNo: string; // e.g. "DEF-2041-A2"
   department: string; // e.g. "Cardiology"
-  location: string; // e.g. "รพ.สต. ดอนสัก"
-  manufacturer: string; // e.g. "Physio-Control"
-  model: string; // e.g. "Lifepak 15"
+  location: string; // e.g. "รพ.สต. ตัวอย่าง 01"
+  manufacturer: string; // e.g. "Sample Manufacturer"
+  model: string; // e.g. "Demo Model 15"
   serialNumber: string; // e.g. "SN-7721-DF"
   ipmRound: string; // e.g. "R3-2026"
   ipmDate: string; // e.g. "04/07/2026"

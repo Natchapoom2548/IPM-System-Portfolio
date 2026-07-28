@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   User,
   Lock, 
@@ -15,6 +15,8 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { apiFetch } from "../utils/api";
+import { DEMO_ACCOUNTS, DEMO_PASSWORD } from "../data/demoAccounts";
+import { resetDemoStorage } from "../utils/demoApi";
 
 interface LoginScreenProps {
   onLogin: (username: string, role: "admin" | "registration" | "reporting" | "ipm" | "repair", profilePic?: string, token?: string) => void;
@@ -80,6 +82,19 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const selectDemoAccount = (demoUsername: string) => {
+    setUsername(demoUsername);
+    setPassword(DEMO_PASSWORD);
+    setErrorMsg("");
+  };
+
+  const handleResetDemo = () => {
+    resetDemoStorage();
+    setUsername("");
+    setPassword("");
+    setErrorMsg("");
   };
 
   return (
@@ -343,7 +358,7 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
             >
               <div className="space-y-2 relative">
                 <div className="inline-flex items-center rounded-full border border-amber-400/30 bg-amber-400/10 px-2.5 py-1 text-[10px] font-black tracking-[0.16em] text-amber-300">
-                  PORTFOLIO DEMO · FICTIONAL DATA
+                  Portfolio Demo - Fictional Data
                 </div>
                 <div className="flex items-center justify-between">
                   <h2 className="text-xl lg:text-2xl font-black text-white flex items-center gap-2">
@@ -358,7 +373,36 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
                     <HeartPulse className="h-5 w-5" />
                   </motion.div>
                 </div>
-                <p className="text-xs text-slate-400">Demonstration accounts only. No production or patient data is used.</p>
+                <p className="text-xs text-slate-400">
+                  Browser-only demonstration. No database, production system, or patient data.
+                </p>
+              </div>
+
+              <div className="rounded-xl border border-cyan-400/20 bg-cyan-400/[0.06] p-3 space-y-2">
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-cyan-300">
+                    Demo accounts · Password: {DEMO_PASSWORD}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={handleResetDemo}
+                    className="text-[10px] font-semibold text-slate-400 hover:text-white"
+                  >
+                    Reset demo
+                  </button>
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                  {DEMO_ACCOUNTS.map((account) => (
+                    <button
+                      key={account.username}
+                      type="button"
+                      onClick={() => selectDemoAccount(account.username)}
+                      className="rounded-lg border border-blue-400/20 bg-slate-950/40 px-2 py-1 text-[10px] font-semibold text-blue-200 hover:border-cyan-400/50 hover:text-white transition-colors"
+                    >
+                      {account.username}
+                    </button>
+                  ))}
+                </div>
               </div>
 
               {errorMsg && (
@@ -424,7 +468,7 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
                 </div>
 
                 <div className="text-[11px] font-medium text-slate-500 pt-1">
-                  Credentials are configured locally through environment variables.
+                  Select a demo account above. Temporary changes remain only in this browser.
                 </div>
 
                 {/* CTA Submit Button with Interactive Micro-interaction */}
@@ -485,8 +529,8 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
               <path d="M9 11l2 2 4-4" />
             </motion.svg>
             <div className="text-[10px] leading-tight">
-              <p className="font-bold text-slate-300 hover:text-white transition-colors">ระบบสาธิตสำหรับผลงาน Portfolio</p>
-              <p className="font-mono text-slate-500 mt-0.5">Demo environment · Sample data only</p>
+              <p className="font-bold text-slate-300 hover:text-white transition-colors">Portfolio Demo - Fictional Data</p>
+              <p className="font-mono text-slate-500 mt-0.5">Local storage · No external database</p>
             </div>
           </motion.div>
         </motion.div>

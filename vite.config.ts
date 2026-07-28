@@ -22,15 +22,12 @@ export default defineConfig(() => {
                 id.includes('xlsx') ||
                 id.includes('jspdf') ||
                 id.includes('jspdf-autotable') ||
+                id.includes('pdfjs-dist') ||
                 id.includes('fflate')
               ) {
                 return; // This tells Vite/Rollup to chunk them naturally based on dynamic imports
               }
 
-              if (id.includes('firebase')) {
-                return 'vendor-firebase';
-              }
-              
               // Group core framework dependencies to prevent circular dependencies and optimize caching
               if (
                 id.includes('react') ||

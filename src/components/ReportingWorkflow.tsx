@@ -5,7 +5,6 @@
 
 import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { saveIpmToGoogleSheet } from "../lib/google-sheets";
 import { 
   FileCheck, 
   Award, 
@@ -868,18 +867,21 @@ export default function ReportingWorkflow({
   const [returnDevice, setReturnDevice] = useState<MedicalDevice | null>(null);
   const [returnReason, setReturnReason] = useState("ข้อมูลไม่ครบถ้วน / รายละเอียดขาดตกบกพร่อง");
   const [customReturnReason, setCustomReturnReason] = useState("");
-  const [isSavingToSheets, setIsSavingToSheets] = useState(false);
-
-  const handleSaveToSheets = async (device: MedicalDevice) => {
-    setIsSavingToSheets(true);
-    try {
-      const url = await saveIpmToGoogleSheet(device);
-      alert(`บันทึกข้อมูลไปยัง Google Sheets สำเร็จ!\nเปิดลิงก์:\n${url}`);
-    } catch (err: any) {
-      alert(`เกิดข้อผิดพลาด: ${err.message}`);
-    } finally {
-      setIsSavingToSheets(false);
-    }
+  const handleDownloadDemoSnapshot = (device: MedicalDevice) => {
+    const payload = {
+      notice: "Portfolio Demo - Fictional Data",
+      exportedAt: new Date().toISOString(),
+      device,
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], {
+      type: "application/json",
+    });
+    const downloadUrl = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = downloadUrl;
+    anchor.download = `${device.id || "demo-device"}-snapshot.json`;
+    anchor.click();
+    URL.revokeObjectURL(downloadUrl);
   };
 
   useEffect(() => {
@@ -3166,12 +3168,11 @@ export default function ReportingWorkflow({
                 </button>
                 
                 <button
-                  onClick={() => handleSaveToSheets(activeCertificateDevice)}
-                  disabled={isSavingToSheets}
-                  className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-md active:scale-95 transition-all cursor-pointer disabled:opacity-50"
+                  onClick={() => handleDownloadDemoSnapshot(activeCertificateDevice)}
+                  className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-md active:scale-95 transition-all cursor-pointer"
                 >
                   <Save className="h-4 w-4" />
-                  {isSavingToSheets ? "กำลังบันทึก..." : "บันทึกข้อมูลไปยัง Sheets"}
+                  ดาวน์โหลด Demo JSON
                 </button>
 
                 <button

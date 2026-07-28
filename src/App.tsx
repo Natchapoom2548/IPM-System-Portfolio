@@ -23,6 +23,7 @@ const UserProfileModal = lazy(() => import("./components/UserProfileModal"));
 const LoginHistory = lazy(() => import("./components/LoginHistory"));
 import type { MedicalDevice } from "./types";
 import { INITIAL_DEVICES } from "./data/mockData";
+import { DEMO_ACCOUNTS, accountFromDemoToken } from "./data/demoAccounts";
 import { convertDeviceToBE, getTodayStrBE, getTodayDateTimeStrBE } from "./utils/dateUtils";
 import { apiFetch } from "./utils/api";
 
@@ -34,9 +35,17 @@ export default function App() {
     const saved = localStorage.getItem("current_user_v1");
     if (saved) {
       try {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        const isDemoAccount = DEMO_ACCOUNTS.some(
+          (account) => account.username === parsed?.username && account.role === parsed?.role,
+        );
+        if (isDemoAccount && accountFromDemoToken(parsed?.token)) {
+          return parsed;
+        }
+        localStorage.removeItem("current_user_v1");
       } catch (e) {
         console.error("Error parsing user from localStorage", e);
+        localStorage.removeItem("current_user_v1");
       }
     }
     return null;

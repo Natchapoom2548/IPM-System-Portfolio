@@ -2164,7 +2164,7 @@ export default function IPMWorkflow({
                       <div>
                         <p className="font-extrabold">อุปกรณ์นี้ยังไม่มีรายการตรวจมาตรฐานครบถ้วน</p>
                         <p className="mt-0.5 text-[11px] font-medium text-amber-800">
-                          ระบบแสดงรายการมาตรฐานให้ชั่วคราวแล้ว กดปุ่มเพื่อบันทึกรายการตามชนิดเครื่องลงในฐานข้อมูล
+                          ระบบแสดงรายการมาตรฐานให้ชั่วคราวแล้ว กดปุ่มเพื่อบันทึกรายการจำลองไว้ใน Local demo storage
                         </p>
                       </div>
                     </div>

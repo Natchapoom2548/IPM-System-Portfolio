@@ -63,7 +63,7 @@ export default function SearchWorkflow({ devices, searchedId, onClearSearchId }:
     if (found) {
       setSelectedDevice(found);
     } else {
-      setSearchError("ไม่พบรหัสครุภัณฑ์หรือชื่อเครื่องดังกล่าวในฐานข้อมูล");
+      setSearchError("ไม่พบรหัสครุภัณฑ์หรือชื่อเครื่องดังกล่าวในชุดข้อมูลสาธิต");
       setSelectedDevice(null);
     }
   };
@@ -182,7 +182,7 @@ export default function SearchWorkflow({ devices, searchedId, onClearSearchId }:
             </button>
           </div>
 
-          {/* Quick list of database devices */}
+          {/* Quick list from the fictional demo dataset */}
           <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm space-y-3">
             <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
               รายการด่วนในคลังทั้งหมด
@@ -222,7 +222,7 @@ export default function SearchWorkflow({ devices, searchedId, onClearSearchId }:
                     พาสปอร์ตประวัติครุภัณฑ์: {selectedDevice.id}
                   </h3>
                   <p className="text-xs text-slate-400 font-sans mt-0.5">
-                    ลงทะเบียนเข้าฐานข้อมูลเมื่อ: {selectedDevice.registrationDate}
+                    เพิ่มลงในชุดข้อมูลสาธิตเมื่อ: {selectedDevice.registrationDate}
                   </p>
                 </div>
                 {getStatusBadge(selectedDevice.status)}

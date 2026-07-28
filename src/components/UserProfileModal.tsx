@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { User, X, Camera, Save, Lock } from "lucide-react";
+import { User, X, Camera, Save, Info } from "lucide-react";
 import { motion } from "motion/react";
 import { apiFetch } from "../utils/api";
+import { DEMO_PASSWORD } from "../data/demoAccounts";
 
 interface UserProfileModalProps {
   currentUser: any;
@@ -10,7 +11,6 @@ interface UserProfileModalProps {
 }
 
 export default function UserProfileModal({ currentUser, onClose, onUpdateProfile }: UserProfileModalProps) {
-  const [password, setPassword] = useState("");
   const [profilePic, setProfilePic] = useState(currentUser?.profilePic || "");
   const [errorMsg, setErrorMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
@@ -23,7 +23,6 @@ export default function UserProfileModal({ currentUser, onClose, onUpdateProfile
         setUsersList(data);
         const me = data.find((u: any) => u.username === currentUser.username);
         if (me) {
-          setPassword("");
           setProfilePic(me.profilePic || "");
         }
       })
@@ -40,7 +39,7 @@ export default function UserProfileModal({ currentUser, onClose, onUpdateProfile
 
     const updatedUsers = usersList.map((u) => {
       if (u.username === currentUser.username) {
-        return { ...u, password: password.trim(), profilePic };
+        return { ...u, profilePic };
       }
       return u;
     });
@@ -53,7 +52,7 @@ export default function UserProfileModal({ currentUser, onClose, onUpdateProfile
       });
 
       onUpdateProfile({ ...currentUser, profilePic });
-      setSuccessMsg("บันทึกข้อมูลเรียบร้อยแล้ว");
+      setSuccessMsg("บันทึกโปรไฟล์ไว้ในเบราว์เซอร์แล้ว");
       setTimeout(() => {
         setSuccessMsg("");
         onClose();
@@ -142,21 +141,12 @@ export default function UserProfileModal({ currentUser, onClose, onUpdateProfile
               />
             </div>
 
-            <div className="space-y-1.5">
-              <label htmlFor="profile-password" className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">รหัสผ่านใหม่ (ไม่บังคับ)</label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-4 w-4 text-slate-400" />
-                </div>
-                <input
-                  id="profile-password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-10 pr-3 py-2 bg-white border border-slate-200 rounded-xl outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-xs font-mono transition-all"
-                  placeholder="เว้นว่างเพื่อคงเดิม (หรือกรอกเพื่อเปลี่ยน)"
-                />
-              </div>
+            <div className="flex items-start gap-2 rounded-xl border border-blue-100 bg-blue-50 p-3 text-xs text-blue-800">
+              <Info className="h-4 w-4 shrink-0 mt-0.5" />
+              <p>
+                บัญชีเดโมใช้รหัสผ่านคงที่ <span className="font-mono font-bold">{DEMO_PASSWORD}</span>{" "}
+                และไม่รองรับการเปลี่ยนรหัสผ่าน รูปโปรไฟล์จะเก็บเฉพาะในเบราว์เซอร์นี้
+              </p>
             </div>
           </div>
         </form>

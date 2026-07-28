@@ -90,7 +90,7 @@ export default function Sidebar({
             ระบบบริหารวงจรเครื่องมือแพทย์
           </h1>
           <p className="text-[10px] text-blue-300 font-mono mt-0.5 uppercase tracking-wider">
-            PORTFOLIO DEMONSTRATION
+            Portfolio Demo - Fictional Data
           </p>
         </div>
       </div>

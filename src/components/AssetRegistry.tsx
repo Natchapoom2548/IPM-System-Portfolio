@@ -28,6 +28,8 @@ import {
 import { MedicalDevice } from "../types";
 import { getTodayStrBE, getPrefixForDevice } from "../utils/dateUtils";
 import { HOSPITALS } from "../data/mockData";
+import sarabunRegularUrl from "../assets/fonts/Sarabun-Regular.ttf?url";
+import sarabunBoldUrl from "../assets/fonts/Sarabun-Bold.ttf?url";
 import {
   createDefaultChecklistsForDevice,
   getChecklistCategory,
@@ -355,27 +357,11 @@ export default function AssetRegistry({
             return;
           }
 
-          // Dynamically load PDF.js from Cloudflare CDN
-          const loadPdfJS = () => {
-            return new Promise<any>((resolve, reject) => {
-              if ((window as any).pdfjsLib) {
-                resolve((window as any).pdfjsLib);
-                return;
-              }
-              const script = document.createElement("script");
-              script.src = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js";
-              script.onload = () => {
-                (window as any).pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js";
-                resolve((window as any).pdfjsLib);
-              };
-              script.onerror = () => {
-                reject(new Error("ไม่สามารถโหลดไลบรารีสำหรับอ่านไฟล์ PDF ได้"));
-              };
-              document.head.appendChild(script);
-            });
-          };
-
-          const pdfjsLib = await loadPdfJS();
+          const [pdfjsLib, workerModule] = await Promise.all([
+            import("pdfjs-dist"),
+            import("pdfjs-dist/build/pdf.worker.min.mjs?url"),
+          ]);
+          pdfjsLib.GlobalWorkerOptions.workerSrc = workerModule.default;
           const loadingTask = pdfjsLib.getDocument({ data: new Uint8Array(arrayBuffer) });
           const pdf = await loadingTask.promise;
           
@@ -847,12 +833,9 @@ export default function AssetRegistry({
 
       let hasThaiFont = false;
       try {
-        const regularUrl = "https://raw.githubusercontent.com/google/fonts/main/ofl/sarabun/Sarabun-Regular.ttf";
-        const boldUrl = "https://raw.githubusercontent.com/google/fonts/main/ofl/sarabun/Sarabun-Bold.ttf";
-
         const [regBase64, boldBase64] = await Promise.all([
-          fetchFontAsBase64(regularUrl),
-          fetchFontAsBase64(boldUrl)
+          fetchFontAsBase64(sarabunRegularUrl),
+          fetchFontAsBase64(sarabunBoldUrl)
         ]);
 
         doc.addFileToVFS("Sarabun-Regular.ttf", regBase64);

@@ -13,14 +13,14 @@ import { Shield,
   Search,
   User,
   ShieldAlert,
-  Database
+  Info
 } from "lucide-react";
 import { apiFetch } from "../utils/api";
+import { DEMO_ACCOUNTS, DEMO_PASSWORD } from "../data/demoAccounts";
 
 export interface UserAccount {
   username: string;
   fullName: string;
-  password?: string;
   profilePic?: string;
   role: "admin" | "registration" | "reporting" | "ipm" | "repair";
 }
@@ -47,7 +47,7 @@ export default function UserManagement() {
       });
   }, []);
 
-  // Sync users with API
+  // Persist the simulated user list through the browser-local demo API.
   useEffect(() => {
     if (isLoaded) {
       apiFetch('/api/users', {
@@ -61,7 +61,6 @@ export default function UserManagement() {
   const [searchQuery, setSearchQuery] = useState("");
   const [isAdding, setIsAdding] = useState(false);
   const [newUsername, setNewUsername] = useState("");
-  const [newPassword, setNewPassword] = useState("");
   const [newFullName, setNewFullName] = useState("");
   const [newRole, setNewRole] = useState<"admin" | "registration" | "reporting" | "ipm" | "repair">("registration");
   const [errorMsg, setErrorMsg] = useState("");
@@ -69,7 +68,6 @@ export default function UserManagement() {
 
   const [editingUsername, setEditingUsername] = useState<string | null>(null);
   const [editingRole, setEditingRole] = useState<"admin" | "registration" | "reporting" | "ipm" | "repair">("registration");
-  const [editingPassword, setEditingPassword] = useState("");
   const [userToDelete, setUserToDelete] = useState<UserAccount | null>(null);
 
 
@@ -89,12 +87,6 @@ export default function UserManagement() {
       setErrorMsg("กรุณากรอกชื่อ-นามสกุล");
       return;
     }
-    if (!newPassword.trim()) {
-      setErrorMsg("กรุณากำหนดรหัสผ่านเริ่มต้น");
-      return;
-    }
-
-    // Check duplicate
     const exists = users.some(
       (u) => u.username.toLowerCase() === normalizedUsername.toLowerCase()
     );
@@ -106,17 +98,15 @@ export default function UserManagement() {
     const newUser: UserAccount = {
       username: normalizedUsername,
       fullName: normalizedFullName,
-      password: newPassword.trim(),
       role: newRole
     };
 
     setUsers((prev) => [...prev, newUser]);
     setNewUsername("");
-    setNewPassword("");
     setNewFullName("");
     setNewRole("registration");
     setIsAdding(false);
-    setSuccessMsg("เพิ่มผู้ใช้งานและกำหนดสิทธิ์เรียบร้อยแล้ว!");
+    setSuccessMsg("เพิ่มรายการผู้ใช้จำลองในเบราว์เซอร์แล้ว (บัญชีนี้ใช้ล็อกอินไม่ได้)");
 
     setTimeout(() => setSuccessMsg(""), 3000);
   };
@@ -144,15 +134,13 @@ export default function UserManagement() {
   const handleStartEdit = (user: UserAccount) => {
     setEditingUsername(user.username);
     setEditingRole(user.role);
-    setEditingPassword(""); // Clear it to avoid exposing password or its hash, allow setting new one
   };
 
   const handleSaveEdit = (usernameToSave: string) => {
     setUsers((prev) =>
       prev.map((u) => {
         if (u.username === usernameToSave) {
-          const updatedPw = editingPassword.trim() ? editingPassword.trim() : u.password;
-          return { ...u, role: editingRole, password: updatedPw };
+          return { ...u, role: editingRole };
         }
         return u;
       })
@@ -202,7 +190,7 @@ export default function UserManagement() {
             <span>จัดการสิทธิ์ผู้ใช้งานระบบ</span>
           </h2>
           <p className="text-xs sm:text-sm text-blue-100 max-w-2xl leading-relaxed font-sans">
-            เพิ่ม ค้นหา และปรับปรุงระดับสิทธิ์การเข้าถึงข้อมูลฝ่ายต่าง ๆ ในระบบสำหรับอาสาสมัครและบุคลากร
+            ทดลองเพิ่ม ค้นหา และปรับระดับสิทธิ์ของผู้ใช้สมมติ ข้อมูลทั้งหมดเก็บเฉพาะในเบราว์เซอร์
           </p>
         </div>
         <div className="relative z-10 shrink-0">
@@ -214,6 +202,14 @@ export default function UserManagement() {
             <span>{isAdding ? "ยกเลิก" : "เพิ่มผู้ใช้งานใหม่"}</span>
           </button>
         </div>
+      </div>
+
+      <div className="flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-xs text-amber-900">
+        <Info className="h-4 w-4 shrink-0 mt-0.5" />
+        <p>
+          การเพิ่ม แก้ไข และลบในหน้านี้เป็นการจำลองเท่านั้น เฉพาะบัญชีเดโมที่กำหนดไว้ 5 บัญชีเท่านั้นที่เข้าสู่ระบบได้
+          โดยใช้รหัสผ่าน <span className="font-mono font-bold">{DEMO_PASSWORD}</span>
+        </p>
       </div>
 
       {successMsg && (
@@ -236,38 +232,26 @@ export default function UserManagement() {
           <h3 className="text-sm font-bold text-slate-800 border-b border-slate-100 pb-2">
             ข้อมูลผู้ใช้งานและฝ่ายสังกัดใหม่
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="space-y-1.5">
               <label className="text-[11px] font-bold text-slate-500">ชื่อผู้ใช้งาน (Username) *</label>
               <input
                 type="text"
                 value={newUsername}
                 onChange={(e) => setNewUsername(e.target.value)}
-                placeholder="เช่น volunteer_01"
+                placeholder="เช่น sample_user_01"
                 className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-blue-600 focus:bg-white text-slate-700 font-semibold"
                 required
               />
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-[11px] font-bold text-slate-500">ชื่อ-นามสกุลจริง *</label>
+              <label className="text-[11px] font-bold text-slate-500">ชื่อสมมติ *</label>
               <input
                 type="text"
                 value={newFullName}
                 onChange={(e) => setNewFullName(e.target.value)}
                 placeholder="เช่น นพ. เอกชัย นามสมมติ"
-                className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-blue-600 focus:bg-white text-slate-700 font-semibold"
-                required
-              />
-            </div>
-
-            <div className="space-y-1.5">
-              <label className="text-[11px] font-bold text-slate-500">รหัสผ่าน (Password) *</label>
-              <input
-                type="text"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                placeholder="กรอกรหัสผ่าน"
                 className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-blue-600 focus:bg-white text-slate-700 font-semibold"
                 required
               />
@@ -327,7 +311,7 @@ export default function UserManagement() {
                 <th className="p-4 w-12 text-center">#</th>
                 <th className="p-4">ผู้ใช้งาน (Username)</th>
                 <th className="p-4">ชื่อ-นามสกุล</th>
-                <th className="p-4">รหัสผ่าน</th>
+                <th className="p-4">สถานะบัญชีเดโม</th>
                 <th className="p-4">ระดับสิทธิ์ (Role Group)</th>
                 <th className="p-4 w-24 text-center">จัดการ</th>
               </tr>
@@ -352,21 +336,14 @@ export default function UserManagement() {
                       {user.fullName}
                     </td>
                     <td className="p-4 text-slate-600 font-medium">
-                      {editingUsername === user.username ? (
-                        <input
-                          type="text"
-                          value={editingPassword}
-                          onChange={(e) => setEditingPassword(e.target.value)}
-                          placeholder="เว้นว่างเพื่อคงเดิม"
-                          className="px-2 py-1 border border-slate-200 rounded text-xs"
-                        />
+                      {DEMO_ACCOUNTS.some((account) => account.username === user.username) ? (
+                        <span className="inline-flex rounded-full border border-emerald-200 bg-emerald-50 px-2 py-1 text-[10px] font-bold text-emerald-700">
+                          บัญชีล็อกอินเดโม
+                        </span>
                       ) : (
-                        <div className="flex items-center gap-2">
-                          <span className="text-slate-400 font-mono">••••••••</span>
-                          <span className="text-[10px] px-1.5 py-0.5 bg-slate-50 text-slate-500 rounded font-sans border border-slate-200/60 font-semibold select-none">
-                            ไม่เปิดเผยโดย API
-                          </span>
-                        </div>
+                        <span className="inline-flex rounded-full border border-slate-200 bg-slate-50 px-2 py-1 text-[10px] font-bold text-slate-500">
+                          รายการจำลองเท่านั้น
+                        </span>
                       )}
                     </td>
                     <td className="p-4">
